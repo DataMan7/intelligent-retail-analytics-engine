@@ -469,6 +469,29 @@ def generate_html_page() -> str:
             transform: translateY(0);
         }}
 
+        .btn.active {{
+            background: var(--gradient-accent);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: pulse 2s infinite;
+        }}
+
+        .btn.active::before {{
+            left: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }}
+
+        @keyframes pulse {{
+            0% {{
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            }}
+            50% {{
+                box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+            }}
+            100% {{
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            }}
+        }}
+
         .result-box {{
             background: var(--color-surface);
             border: 1px solid var(--color-border);
@@ -514,6 +537,25 @@ def generate_html_page() -> str:
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
             border-left-color: var(--color-secondary);
+        }}
+
+        .feature-item.active {{
+            border-left-color: var(--color-accent);
+            background: var(--color-surface);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+            animation: featurePulse 2s infinite;
+        }}
+
+        @keyframes featurePulse {{
+            0% {{
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+            }}
+            50% {{
+                box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+            }}
+            100% {{
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+            }}
         }}
 
         .feature-item h4 {{
@@ -723,10 +765,10 @@ def generate_html_page() -> str:
             </p>
 
             <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);">
-                <button class="btn" onclick="runDashboardTest()">📊 Dashboard Data</button>
-                <button class="btn" onclick="runProductTest()">📦 Product Performance</button>
-                <button class="btn" onclick="runCategoryTest()">📂 Category Analysis</button>
-                <button class="btn" onclick="runHealthTest()">❤️ System Health</button>
+                <button class="btn" onclick="runDashboardTest(event)">📊 Dashboard Data</button>
+                <button class="btn" onclick="runProductTest(event)">📦 Product Performance</button>
+                <button class="btn" onclick="runCategoryTest(event)">📂 Category Analysis</button>
+                <button class="btn" onclick="runHealthTest(event)">❤️ System Health</button>
             </div>
 
             <div id="test-results"></div>
@@ -740,27 +782,27 @@ def generate_html_page() -> str:
             </p>
 
             <div class="feature-list">
-                <div class="feature-item" onclick="showFeatureDemo('multimodal')">
+                <div class="feature-item" onclick="showFeatureDemo('multimodal', event)">
                     <h4>🤖 Multimodal Embeddings</h4>
                     <p>Advanced text and image processing for comprehensive product understanding and categorization</p>
                 </div>
-                <div class="feature-item" onclick="showFeatureDemo('vector')">
+                <div class="feature-item" onclick="showFeatureDemo('vector', event)">
                     <h4>🔍 Vector Search</h4>
                     <p>Semantic similarity matching for intelligent product recommendations and discovery</p>
                 </div>
-                <div class="feature-item" onclick="showFeatureDemo('generative')">
+                <div class="feature-item" onclick="showFeatureDemo('generative', event)">
                     <h4>🧠 Generative AI</h4>
                     <p>Automated business insights and executive summaries powered by advanced AI models</p>
                 </div>
-                <div class="feature-item" onclick="showFeatureDemo('analytics')">
+                <div class="feature-item" onclick="showFeatureDemo('analytics', event)">
                     <h4>📊 Real-time Analytics</h4>
                     <p>Live dashboard with streaming data and performance monitoring capabilities</p>
                 </div>
-                <div class="feature-item" onclick="showFeatureDemo('security')">
+                <div class="feature-item" onclick="showFeatureDemo('security', event)">
                     <h4>🔒 Enterprise Security</h4>
                     <p>OWASP compliant security framework with comprehensive data protection</p>
                 </div>
-                <div class="feature-item" onclick="showFeatureDemo('performance')">
+                <div class="feature-item" onclick="showFeatureDemo('performance', event)">
                     <h4>⚡ High Performance</h4>
                     <p>Optimized BigQuery queries with sub-2 second response times and caching</p>
                 </div>
@@ -810,146 +852,280 @@ def generate_html_page() -> str:
             }}
         }}
 
-        function showResult(title, data) {{
+        function showResult(title, data, testType) {{
             const resultsDiv = document.getElementById('test-results');
+
+            // Remove existing result for this test type
+            const existingResult = document.getElementById(`result-${{testType}}`);
+            if (existingResult) {{
+                existingResult.remove();
+            }}
+
+            // Create new result box
             const resultBox = document.createElement('div');
             resultBox.className = 'result-box';
+            resultBox.id = `result-${{testType}}`;
             resultBox.innerHTML = `<strong>${{title}}:</strong>\\n${{JSON.stringify(data, null, 2)}}`;
             resultsDiv.appendChild(resultBox);
+
+            // Scroll to results
+            resultBox.scrollIntoView({{ behavior: 'smooth', block: 'nearest' }});
         }}
 
+        function hideResult(testType) {{
+            const resultBox = document.getElementById(`result-${{testType}}`);
+            if (resultBox) {{
+                resultBox.remove();
+            }}
+        }}
+
+        // Global state for button toggles
+        const buttonStates = {{
+            dashboard: false,
+            products: false,
+            categories: false,
+            health: false
+        }};
+
         async function runDashboardTest() {{
-            console.log('Running dashboard test...');
-            try {{
-                const response = await fetch('/api/test/dashboard');
-                if (!response.ok) {{
-                    throw new Error(`HTTP error! status: ${{response.status}}`);
+            const button = event.target;
+            const isActive = buttonStates.dashboard;
+
+            if (isActive) {{
+                // Turn OFF - hide results
+                hideResult('dashboard');
+                buttonStates.dashboard = false;
+                button.classList.remove('active');
+                button.innerHTML = '📊 Dashboard Data';
+                console.log('Dashboard test turned OFF');
+            }} else {{
+                // Turn ON - show results
+                console.log('Running dashboard test...');
+                try {{
+                    const response = await fetch('/api/test/dashboard');
+                    if (!response.ok) {{
+                        throw new Error(`HTTP error! status: ${{response.status}}`);
+                    }}
+                    const data = await response.json();
+                    console.log('Dashboard test successful:', data);
+                    showResult('📊 Dashboard Test Results', data, 'dashboard');
+                    buttonStates.dashboard = true;
+                    button.classList.add('active');
+                    button.innerHTML = '📊 Dashboard Data ✅';
+                }} catch (error) {{
+                    console.error('Dashboard test error:', error);
+                    showResult('❌ Dashboard Test Error', {{ error: error.message, status: 'failed' }}, 'dashboard');
+                    buttonStates.dashboard = true;
+                    button.classList.add('active');
+                    button.innerHTML = '📊 Dashboard Data ❌';
                 }}
-                const data = await response.json();
-                console.log('Dashboard test successful:', data);
-                showResult('📊 Dashboard Test Results', data);
-            }} catch (error) {{
-                console.error('Dashboard test error:', error);
-                showResult('❌ Dashboard Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
         async function runProductTest() {{
-            console.log('Running product test...');
-            try {{
-                const response = await fetch('/api/test/products');
-                if (!response.ok) {{
-                    throw new Error(`HTTP error! status: ${{response.status}}`);
+            const button = event.target;
+            const isActive = buttonStates.products;
+
+            if (isActive) {{
+                // Turn OFF - hide results
+                hideResult('products');
+                buttonStates.products = false;
+                button.classList.remove('active');
+                button.innerHTML = '📦 Product Performance';
+                console.log('Product test turned OFF');
+            }} else {{
+                // Turn ON - show results
+                console.log('Running product test...');
+                try {{
+                    const response = await fetch('/api/test/products');
+                    if (!response.ok) {{
+                        throw new Error(`HTTP error! status: ${{response.status}}`);
+                    }}
+                    const data = await response.json();
+                    console.log('Product test successful:', data);
+                    showResult('📦 Product Performance Test Results', data, 'products');
+                    buttonStates.products = true;
+                    button.classList.add('active');
+                    button.innerHTML = '📦 Product Performance ✅';
+                }} catch (error) {{
+                    console.error('Product test error:', error);
+                    showResult('❌ Product Test Error', {{ error: error.message, status: 'failed' }}, 'products');
+                    buttonStates.products = true;
+                    button.classList.add('active');
+                    button.innerHTML = '📦 Product Performance ❌';
                 }}
-                const data = await response.json();
-                console.log('Product test successful:', data);
-                showResult('📦 Product Performance Test Results', data);
-            }} catch (error) {{
-                console.error('Product test error:', error);
-                showResult('❌ Product Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
         async function runCategoryTest() {{
-            console.log('Running category test...');
-            try {{
-                const response = await fetch('/api/test/categories');
-                if (!response.ok) {{
-                    throw new Error(`HTTP error! status: ${{response.status}}`);
+            const button = event.target;
+            const isActive = buttonStates.categories;
+
+            if (isActive) {{
+                // Turn OFF - hide results
+                hideResult('categories');
+                buttonStates.categories = false;
+                button.classList.remove('active');
+                button.innerHTML = '📂 Category Analysis';
+                console.log('Category test turned OFF');
+            }} else {{
+                // Turn ON - show results
+                console.log('Running category test...');
+                try {{
+                    const response = await fetch('/api/test/categories');
+                    if (!response.ok) {{
+                        throw new Error(`HTTP error! status: ${{response.status}}`);
+                    }}
+                    const data = await response.json();
+                    console.log('Category test successful:', data);
+                    showResult('📂 Category Analysis Test Results', data, 'categories');
+                    buttonStates.categories = true;
+                    button.classList.add('active');
+                    button.innerHTML = '📂 Category Analysis ✅';
+                }} catch (error) {{
+                    console.error('Category test error:', error);
+                    showResult('❌ Category Test Error', {{ error: error.message, status: 'failed' }}, 'categories');
+                    buttonStates.categories = true;
+                    button.classList.add('active');
+                    button.innerHTML = '📂 Category Analysis ❌';
                 }}
-                const data = await response.json();
-                console.log('Category test successful:', data);
-                showResult('📂 Category Analysis Test Results', data);
-            }} catch (error) {{
-                console.error('Category test error:', error);
-                showResult('❌ Category Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
         async function runHealthTest() {{
-            console.log('Running health test...');
-            try {{
-                const response = await fetch('/api/test/health');
-                if (!response.ok) {{
-                    throw new Error(`HTTP error! status: ${{response.status}}`);
+            const button = event.target;
+            const isActive = buttonStates.health;
+
+            if (isActive) {{
+                // Turn OFF - hide results
+                hideResult('health');
+                buttonStates.health = false;
+                button.classList.remove('active');
+                button.innerHTML = '❤️ System Health';
+                console.log('Health test turned OFF');
+            }} else {{
+                // Turn ON - show results
+                console.log('Running health test...');
+                try {{
+                    const response = await fetch('/api/test/health');
+                    if (!response.ok) {{
+                        throw new Error(`HTTP error! status: ${{response.status}}`);
+                    }}
+                    const data = await response.json();
+                    console.log('Health test successful:', data);
+                    showResult('❤️ System Health Test Results', data, 'health');
+                    buttonStates.health = true;
+                    button.classList.add('active');
+                    button.innerHTML = '❤️ System Health ✅';
+                }} catch (error) {{
+                    console.error('Health test error:', error);
+                    showResult('❌ Health Test Error', {{ error: error.message, status: 'failed' }}, 'health');
+                    buttonStates.health = true;
+                    button.classList.add('active');
+                    button.innerHTML = '❤️ System Health ❌';
                 }}
-                const data = await response.json();
-                console.log('Health test successful:', data);
-                showResult('❤️ System Health Test Results', data);
-            }} catch (error) {{
-                console.error('Health test error:', error);
-                showResult('❌ Health Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
-        async function showFeatureDemo(feature) {{
+        // Global state for AI feature demos
+        const featureStates = {{
+            multimodal: false,
+            vector: false,
+            generative: false,
+            analytics: false,
+            security: false,
+            performance: false
+        }};
+
+        async function showFeatureDemo(feature, event) {{
             const resultsDiv = document.getElementById('feature-demo-results');
-            let demoContent = '';
+            const isActive = featureStates[feature];
 
-            switch(feature) {{
-                case 'multimodal':
-                    demoContent = '<div class="result-box">' +
-                        '<h4>🤖 Multimodal Embeddings Demo</h4>' +
-                        '<p><strong>Technology:</strong> Combines text and image processing</p>' +
-                        '<p><strong>Use Case:</strong> Product understanding from descriptions and images</p>' +
-                        '<p><strong>BigQuery Integration:</strong> ML.GENERATE_EMBEDDING with multimodal data</p>' +
-                        '<p><strong>Benefits:</strong> 94% accuracy in product categorization</p>' +
-                        '<button class="btn" onclick="runMultimodalTest()">🔬 Run Multimodal Analysis</button>' +
-                        '</div>';
-                    break;
-                case 'vector':
-                    demoContent = '<div class="result-box">' +
-                        '<h4>🔍 Vector Search Demo</h4>' +
-                        '<p><strong>Technology:</strong> IVF indexing with cosine similarity</p>' +
-                        '<p><strong>Use Case:</strong> Finding similar products instantly</p>' +
-                        '<p><strong>BigQuery Integration:</strong> VECTOR_SEARCH function</p>' +
-                        '<p><strong>Performance:</strong> Sub-100ms query response</p>' +
-                        '<button class="btn" onclick="runVectorSearchTest()">🔍 Test Vector Search</button>' +
-                        '</div>';
-                    break;
-                case 'generative':
-                    demoContent = '<div class="result-box">' +
-                        '<h4>🧠 Generative AI Demo</h4>' +
-                        '<p><strong>Technology:</strong> AI.GENERATE_TEXT with business context</p>' +
-                        '<p><strong>Use Case:</strong> Automated business insights and summaries</p>' +
-                        '<p><strong>BigQuery Integration:</strong> Direct SQL AI generation</p>' +
-                        '<p><strong>Output:</strong> Executive-ready business intelligence</p>' +
-                        '<button class="btn" onclick="runGenerativeAITest()">🧠 Generate Business Insights</button>' +
-                        '</div>';
-                    break;
-                case 'analytics':
-                    demoContent = '<div class="result-box">' +
-                        '<h4>📊 Real-time Analytics Demo</h4>' +
-                        '<p><strong>Technology:</strong> Live dashboard with streaming data</p>' +
-                        '<p><strong>Use Case:</strong> Real-time business monitoring</p>' +
-                        '<p><strong>BigQuery Integration:</strong> Continuous data pipelines</p>' +
-                        '<p><strong>Update Frequency:</strong> Real-time with <2s latency</p>' +
-                        '<button class="btn" onclick="runRealtimeAnalyticsTest()">📊 View Live Metrics</button>' +
-                        '</div>';
-                    break;
-                case 'security':
-                    demoContent = '<div class="result-box">' +
-                        '<h4>🔒 Enterprise Security Demo</h4>' +
-                        '<p><strong>Technology:</strong> OWASP compliant security framework</p>' +
-                        '<p><strong>Use Case:</strong> Enterprise-grade data protection</p>' +
-                        '<p><strong>BigQuery Integration:</strong> IAM, VPC, encryption</p>' +
-                        '<p><strong>Compliance:</strong> SOC 2, GDPR, HIPAA ready</p>' +
-                        '<button class="btn" onclick="runSecurityAuditTest()">🔒 Run Security Check</button>' +
-                        '</div>';
-                    break;
-                case 'performance':
-                    demoContent = '<div class="result-box">' +
-                        '<h4>⚡ High Performance Demo</h4>' +
-                        '<p><strong>Technology:</strong> Optimized BigQuery queries with caching</p>' +
-                        '<p><strong>Use Case:</strong> Enterprise-scale data processing</p>' +
-                        '<p><strong>BigQuery Integration:</strong> Query optimization and partitioning</p>' +
-                        '<p><strong>Scale:</strong> Handles 1M+ products with <2s response</p>' +
-                        '<button class="btn" onclick="runPerformanceTest()">⚡ Test Performance</button>' +
-                        '</div>';
-                    break;
+            if (isActive) {{
+                // Turn OFF - hide results
+                hideFeatureDemo(feature);
+                featureStates[feature] = false;
+                event.currentTarget.classList.remove('active');
+                console.log(`${{feature}} demo turned OFF`);
+            }} else {{
+                // Turn ON - show results
+                let demoContent = '';
+
+                switch(feature) {{
+                    case 'multimodal':
+                        demoContent = '<div class="result-box" id="demo-multimodal">' +
+                            '<h4>🤖 Multimodal Embeddings Demo</h4>' +
+                            '<p><strong>Technology:</strong> Combines text and image processing</p>' +
+                            '<p><strong>Use Case:</strong> Product understanding from descriptions and images</p>' +
+                            '<p><strong>BigQuery Integration:</strong> ML.GENERATE_EMBEDDING with multimodal data</p>' +
+                            '<p><strong>Benefits:</strong> 94% accuracy in product categorization</p>' +
+                            '<button class="btn" onclick="runMultimodalTest()">🔬 Run Multimodal Analysis</button>' +
+                            '</div>';
+                        break;
+                    case 'vector':
+                        demoContent = '<div class="result-box" id="demo-vector">' +
+                            '<h4>🔍 Vector Search Demo</h4>' +
+                            '<p><strong>Technology:</strong> IVF indexing with cosine similarity</p>' +
+                            '<p><strong>Use Case:</strong> Finding similar products instantly</p>' +
+                            '<p><strong>BigQuery Integration:</strong> VECTOR_SEARCH function</p>' +
+                            '<p><strong>Performance:</strong> Sub-100ms query response</p>' +
+                            '<button class="btn" onclick="runVectorSearchTest()">🔍 Test Vector Search</button>' +
+                            '</div>';
+                        break;
+                    case 'generative':
+                        demoContent = '<div class="result-box" id="demo-generative">' +
+                            '<h4>🧠 Generative AI Demo</h4>' +
+                            '<p><strong>Technology:</strong> AI.GENERATE_TEXT with business context</p>' +
+                            '<p><strong>Use Case:</strong> Automated business insights and summaries</p>' +
+                            '<p><strong>BigQuery Integration:</strong> Direct SQL AI generation</p>' +
+                            '<p><strong>Output:</strong> Executive-ready business intelligence</p>' +
+                            '<button class="btn" onclick="runGenerativeAITest()">🧠 Generate Business Insights</button>' +
+                            '</div>';
+                        break;
+                    case 'analytics':
+                        demoContent = '<div class="result-box" id="demo-analytics">' +
+                            '<h4>📊 Real-time Analytics Demo</h4>' +
+                            '<p><strong>Technology:</strong> Live dashboard with streaming data</p>' +
+                            '<p><strong>Use Case:</strong> Real-time business monitoring</p>' +
+                            '<p><strong>BigQuery Integration:</strong> Continuous data pipelines</p>' +
+                            '<p><strong>Update Frequency:</strong> Real-time with <2s latency</p>' +
+                            '<button class="btn" onclick="runRealtimeAnalyticsTest()">📊 View Live Metrics</button>' +
+                            '</div>';
+                        break;
+                    case 'security':
+                        demoContent = '<div class="result-box" id="demo-security">' +
+                            '<h4>🔒 Enterprise Security Demo</h4>' +
+                            '<p><strong>Technology:</strong> OWASP compliant security framework</p>' +
+                            '<p><strong>Use Case:</strong> Enterprise-grade data protection</p>' +
+                            '<p><strong>BigQuery Integration:</strong> IAM, VPC, encryption</p>' +
+                            '<p><strong>Compliance:</strong> SOC 2, GDPR, HIPAA ready</p>' +
+                            '<button class="btn" onclick="runSecurityAuditTest()">🔒 Run Security Check</button>' +
+                            '</div>';
+                        break;
+                    case 'performance':
+                        demoContent = '<div class="result-box" id="demo-performance">' +
+                            '<h4>⚡ High Performance Demo</h4>' +
+                            '<p><strong>Technology:</strong> Optimized BigQuery queries with caching</p>' +
+                            '<p><strong>Use Case:</strong> Enterprise-scale data processing</p>' +
+                            '<p><strong>BigQuery Integration:</strong> Query optimization and partitioning</p>' +
+                            '<p><strong>Scale:</strong> Handles 1M+ products with <2s response</p>' +
+                            '<button class="btn" onclick="runPerformanceTest()">⚡ Test Performance</button>' +
+                            '</div>';
+                        break;
+                }}
+
+                resultsDiv.innerHTML = demoContent;
+                featureStates[feature] = true;
+                event.currentTarget.classList.add('active');
+                console.log(`${{feature}} demo turned ON`);
             }}
+        }}
 
-            resultsDiv.innerHTML = demoContent;
+        function hideFeatureDemo(feature) {{
+            const demoElement = document.getElementById(`demo-${{feature}}`);
+            if (demoElement) {{
+                demoElement.remove();
+            }}
         }}
 
         async function runMultimodalTest() {{
