@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "bigquery-ai",
   "builds": [
     {
       "src": "vercel_app.py",
@@ -16,11 +15,6 @@
       "dest": "vercel_app.py"
     }
   ],
-  "functions": {
-    "vercel_app.py": {
-      "runtime": "python3.9"
-    }
-  },
   "env": {
     "PYTHONPATH": "."
   }
