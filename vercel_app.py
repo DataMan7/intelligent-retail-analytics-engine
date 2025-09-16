@@ -611,4 +611,5 @@ def handler(event, context):
 # For local development
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)# Trigger Vercel redeploy
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+# Trigger Vercel redeploy
