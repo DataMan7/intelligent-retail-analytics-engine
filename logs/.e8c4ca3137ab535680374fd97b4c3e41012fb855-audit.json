@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/dataman/Desktop/Kaggle/BigQuery_AI/logs/.e8c4ca3137ab535680374fd97b4c3e41012fb855-audit.json",
+    "files": [
+        {
+            "date": 1757975181590,
+            "name": "/home/dataman/Desktop/Kaggle/BigQuery_AI/logs/mcp-puppeteer-2025-09-16.log",
+            "hash": "019239b9ab4b95723e0c9c6e43990893fcd286bafc45263671c55b5f1d22be3f"
+        }
+    ],
+    "hashType": "sha256"
+}

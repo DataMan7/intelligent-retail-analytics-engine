@@ -1,0 +1,330 @@
+# 🏆 Intelligent Retail Analytics Engine v3.0 - Docker Compose
+# Enterprise-grade full-stack deployment with security and monitoring
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # API SERVICE - Main Application
+  # ============================================================================
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: production
+    container_name: retail-analytics-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATABASE_URL=postgresql://retail_user:retail_password@postgres:5432/retail_analytics
+      - REDIS_URL=redis://redis:6379/0
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCP_REGION=${GCP_REGION}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+      - ./models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - retail-analytics
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ============================================================================
+  # DATABASE SERVICE - PostgreSQL with security
+  # ============================================================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: retail-analytics-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=retail_analytics
+      - POSTGRES_USER=retail_user
+      - POSTGRES_PASSWORD=retail_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - retail-analytics
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retail_user -d retail_analytics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+
+  # ============================================================================
+  # CACHE SERVICE - Redis with persistence
+  # ============================================================================
+
+  redis:
+    image: redis:7-alpine
+    container_name: retail-analytics-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass retail_cache_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - retail-analytics
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+
+  # ============================================================================
+  # MONITORING SERVICES
+  # ============================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: retail-analytics-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - retail-analytics
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    security_opt:
+      - no-new-privileges:true
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: retail-analytics-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin_password_change_me
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - retail-analytics
+    depends_on:
+      - prometheus
+    security_opt:
+      - no-new-privileges:true
+
+  # ============================================================================
+  # LOGGING SERVICE - Elasticsearch stack
+  # ============================================================================
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: retail-analytics-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - retail-analytics
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: retail-analytics-logstash
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    ports:
+      - "5044:5044"
+    networks:
+      - retail-analytics
+    depends_on:
+      - elasticsearch
+    security_opt:
+      - no-new-privileges:true
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: retail-analytics-kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    networks:
+      - retail-analytics
+    depends_on:
+      - elasticsearch
+    security_opt:
+      - no-new-privileges:true
+
+  # ============================================================================
+  # DEVELOPMENT SERVICES
+  # ============================================================================
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: retail-analytics-pgadmin
+    restart: unless-stopped
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@retail-analytics.com
+      - PGADMIN_DEFAULT_PASSWORD=admin_password_change_me
+    ports:
+      - "5050:80"
+    networks:
+      - retail-analytics
+    depends_on:
+      - postgres
+    profiles:
+      - dev
+    security_opt:
+      - no-new-privileges:true
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: retail-analytics-redis-commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:retail_cache_password
+    ports:
+      - "8081:8081"
+    networks:
+      - retail-analytics
+    depends_on:
+      - redis
+    profiles:
+      - dev
+    security_opt:
+      - no-new-privileges:true
+
+  # ============================================================================
+  # BACKUP SERVICE
+  # ============================================================================
+
+  backup:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backup
+    container_name: retail-analytics-backup
+    restart: "no"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=retail_analytics
+      - POSTGRES_USER=retail_user
+      - POSTGRES_PASSWORD=retail_password
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=retail_cache_password
+    volumes:
+      - ./backups:/backups
+      - ./uploads:/app/uploads:ro
+      - ./models:/app/models:ro
+    networks:
+      - retail-analytics
+    depends_on:
+      - postgres
+      - redis
+    profiles:
+      - backup
+    security_opt:
+      - no-new-privileges:true
+
+# ============================================================================
+# NETWORKS
+# ============================================================================
+
+networks:
+  retail-analytics:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+
+# ============================================================================
+# CONFIGURATIONS
+# ============================================================================
+
+configs:
+  prometheus_config:
+    file: ./monitoring/prometheus.yml
+  grafana_config:
+    file: ./monitoring/grafana/grafana.ini
+
+# ============================================================================
+# SECRETS
+# ============================================================================
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  gcp_credentials:
+    file: ./secrets/gcp_credentials.json

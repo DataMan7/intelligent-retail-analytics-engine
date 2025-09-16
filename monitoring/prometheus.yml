@@ -1,0 +1,215 @@
+# 🏆 Intelligent Retail Analytics Engine v3.0 - Prometheus Configuration
+# Enterprise-grade monitoring with security and performance metrics
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'
+rule_files:
+  - "alert_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape
+scrape_configs:
+  # ============================================================================
+  # APPLICATION METRICS
+  # ============================================================================
+
+  - job_name: 'retail-analytics-api'
+    static_configs:
+      - targets: ['api:8000']
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    metrics_path: '/metrics'
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'retail-analytics-api'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'retail-analytics-api'
+    # Security: Only allow internal network access
+    tls_config:
+      insecure_skip_verify: true
+
+  # ============================================================================
+  # DATABASE METRICS
+  # ============================================================================
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'retail-analytics-postgres'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'postgres'
+    # Database-specific labels
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'pg_.*'
+        action: keep
+
+  # ============================================================================
+  # CACHE METRICS
+  # ============================================================================
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:9121']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'retail-analytics-redis'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'redis'
+
+  # ============================================================================
+  # SYSTEM METRICS
+  # ============================================================================
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets:
+        - 'api:9100'
+        - 'postgres:9100'
+        - 'redis:9100'
+        - 'elasticsearch:9100'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+):\d+'
+        replacement: '${1}'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'node-exporter'
+
+  # ============================================================================
+  # BIGQUERY METRICS (Custom Exporter)
+  # ============================================================================
+
+  - job_name: 'bigquery-metrics'
+    static_configs:
+      - targets: ['bigquery-exporter:8080']
+    scrape_interval: 60s
+    scrape_timeout: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'bigquery-metrics'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'bigquery-metrics'
+
+  # ============================================================================
+  # BUSINESS METRICS
+  # ============================================================================
+
+  - job_name: 'business-metrics'
+    static_configs:
+      - targets: ['api:8001']
+    scrape_interval: 60s
+    scrape_timeout: 30s
+    metrics_path: '/business-metrics'
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'business-metrics'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'business-metrics'
+
+  # ============================================================================
+  # SECURITY METRICS
+  # ============================================================================
+
+  - job_name: 'security-metrics'
+    static_configs:
+      - targets: ['api:8002']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/security-metrics'
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'security-metrics'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'security-metrics'
+
+  # ============================================================================
+  # EXTERNAL SERVICES
+  # ============================================================================
+
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch:9114']
+    scrape_interval: 60s
+    scrape_timeout: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'retail-analytics-elasticsearch'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'elasticsearch'
+
+  - job_name: 'logstash'
+    static_configs:
+      - targets: ['logstash:9308']
+    scrape_interval: 60s
+    scrape_timeout: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'retail-analytics-logstash'
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'logstash'
+
+# ============================================================================
+# REMOTE WRITE CONFIGURATION (Optional)
+# ============================================================================
+
+# remote_write:
+#   - url: "https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push"
+#     basic_auth:
+#       username: "your-username"
+#       password: "your-password"
+
+# ============================================================================
+# REMOTE READ CONFIGURATION (Optional)
+# ============================================================================
+
+# remote_read:
+#   - url: "https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom"
+#     basic_auth:
+#       username: "your-username"
+#       password: "your-password"

@@ -1,0 +1,4 @@
+2025-09-16 02:51:29,356 - ERROR - ❌ Missing Google Cloud dependency: No module named 'google'
+2025-09-16 02:51:29,356 - ERROR - Install with: pip install google-cloud-bigquery google-cloud-aiplatform
+2025-09-16 02:51:29,461 - ERROR - ❌ Missing Google Cloud dependency: No module named 'google'
+2025-09-16 02:51:29,462 - ERROR - Install with: pip install google-cloud-bigquery google-cloud-aiplatform

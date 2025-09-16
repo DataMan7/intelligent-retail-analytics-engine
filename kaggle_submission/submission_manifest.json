@@ -1,0 +1,26 @@
+{
+  "competition": "BigQuery AI - Building the Future of Data",
+  "submission_type": "Hackathon Entry",
+  "files_included": [
+    "kaggle_submission_writeup.md",
+    "retail_analytics_engine.sql",
+    "setup_bigquery_engine.py",
+    "demo_retail_analytics.py",
+    "test_retail_analytics.py",
+    "requirements.txt",
+    "README.md",
+    "survey_response.md"
+  ],
+  "main_writeup": "kaggle_submission_writeup.md",
+  "code_notebook": "retail_analytics_engine.sql",
+  "survey_response": "survey_response.md",
+  "bonus_materials": [
+    "setup_bigquery_engine.py",
+    "demo_retail_analytics.py",
+    "test_retail_analytics.py",
+    "requirements.txt",
+    "README.md"
+  ],
+  "created_at": "2024-09-15",
+  "contact": "Senior Data Engineer & AI Architect"
+}

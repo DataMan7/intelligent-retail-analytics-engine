@@ -1,0 +1,395 @@
+# 🏆 Intelligent Retail Analytics Engine v3.0 - Prometheus Alert Rules
+# Enterprise-grade alerting with security and business metrics
+
+groups:
+  # ============================================================================
+  # INFRASTRUCTURE ALERTS
+  # ============================================================================
+
+  - name: infrastructure_alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Instance {{ $labels.instance }} is down"
+          description: "{{ $labels.instance }} has been down for more than 5 minutes."
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/instance-down"
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-cpu"
+
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value }}% on {{ $labels.instance }}"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-memory"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 5m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is {{ $value }}% available on {{ $labels.instance }}"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/low-disk-space"
+
+  # ============================================================================
+  # APPLICATION ALERTS
+  # ============================================================================
+
+  - name: application_alerts
+    rules:
+      - alert: APIDown
+        expr: up{job="retail-analytics-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: application
+          service: api
+        annotations:
+          summary: "Retail Analytics API is down"
+          description: "The Retail Analytics API has been down for more than 2 minutes"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/api-down"
+
+      - alert: HighAPIErrorRate
+        expr: rate(http_requests_total{status=~"5..", job="retail-analytics-api"}[5m]) / rate(http_requests_total{job="retail-analytics-api"}[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: application
+          service: api
+        annotations:
+          summary: "High API error rate"
+          description: "API error rate is {{ $value }}% over the last 5 minutes"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-api-errors"
+
+      - alert: SlowAPIResponse
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="retail-analytics-api"}[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          category: application
+          service: api
+        annotations:
+          summary: "Slow API response time"
+          description: "95th percentile response time is {{ $value }}s"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/slow-api"
+
+      - alert: HighAPILatency
+        expr: rate(http_request_duration_seconds_sum{job="retail-analytics-api"}[5m]) / rate(http_request_duration_seconds_count{job="retail-analytics-api"}[5m]) > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: application
+          service: api
+        annotations:
+          summary: "High API latency"
+          description: "Average API response time is {{ $value }}s"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-latency"
+
+  # ============================================================================
+  # DATABASE ALERTS
+  # ============================================================================
+
+  - name: database_alerts
+    rules:
+      - alert: DatabaseDown
+        expr: pg_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+          service: postgres
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL database has been down for more than 2 minutes"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/database-down"
+
+      - alert: HighDatabaseConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+          service: postgres
+        annotations:
+          summary: "High database connection count"
+          description: "Database has {{ $value }} active connections"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-db-connections"
+
+      - alert: SlowDatabaseQueries
+        expr: histogram_quantile(0.95, rate(pg_stat_statements_total_time_bucket[5m])) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+          service: postgres
+        annotations:
+          summary: "Slow database queries detected"
+          description: "95th percentile query time is {{ $value }}ms"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/slow-queries"
+
+      - alert: DatabaseDiskUsage
+        expr: (pg_database_size_bytes / pg_settings_max_connections) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          category: database
+          service: postgres
+        annotations:
+          summary: "High database disk usage"
+          description: "Database disk usage is {{ $value }}%"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-db-disk"
+
+  # ============================================================================
+  # CACHE ALERTS
+  # ============================================================================
+
+  - name: cache_alerts
+    rules:
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: cache
+          service: redis
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis cache has been down for more than 2 minutes"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/redis-down"
+
+      - alert: HighRedisMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+          service: redis
+        annotations:
+          summary: "High Redis memory usage"
+          description: "Redis memory usage is {{ $value }}%"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-redis-memory"
+
+      - alert: RedisConnectionIssues
+        expr: rate(redis_rejected_connections_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+          service: redis
+        annotations:
+          summary: "Redis connection issues"
+          description: "Redis has rejected {{ $value }} connections in the last 5 minutes"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/redis-connections"
+
+  # ============================================================================
+  # BIGQUERY ALERTS
+  # ============================================================================
+
+  - name: bigquery_alerts
+    rules:
+      - alert: BigQueryQuotaExceeded
+        expr: bigquery_slots_used > 1800
+        for: 5m
+        labels:
+          severity: critical
+          category: bigquery
+          service: bigquery
+        annotations:
+          summary: "BigQuery quota exceeded"
+          description: "BigQuery slots used: {{ $value }}"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/bigquery-quota"
+
+      - alert: BigQueryHighLatency
+        expr: histogram_quantile(0.95, rate(bigquery_query_duration_seconds_bucket[5m])) > 30
+        for: 5m
+        labels:
+          severity: warning
+          category: bigquery
+          service: bigquery
+        annotations:
+          summary: "High BigQuery latency"
+          description: "95th percentile BigQuery query time is {{ $value }}s"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/bigquery-latency"
+
+      - alert: BigQueryErrors
+        expr: rate(bigquery_query_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: bigquery
+          service: bigquery
+        annotations:
+          summary: "BigQuery query errors"
+          description: "BigQuery error rate is {{ $value }}%"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/bigquery-errors"
+
+  # ============================================================================
+  # SECURITY ALERTS
+  # ============================================================================
+
+  - name: security_alerts
+    rules:
+      - alert: FailedLoginAttempts
+        expr: rate(failed_login_attempts_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          category: security
+          type: authentication
+        annotations:
+          summary: "High number of failed login attempts"
+          description: "Failed login attempts: {{ $value }} per minute"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/failed-logins"
+
+      - alert: SuspiciousAPIAccess
+        expr: rate(api_requests_from_suspicious_ips_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: security
+          type: suspicious_activity
+        annotations:
+          summary: "Suspicious API access detected"
+          description: "API requests from suspicious IPs: {{ $value }} per minute"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/suspicious-activity"
+
+      - alert: RateLimitExceeded
+        expr: rate(rate_limit_exceeded_total[5m]) > 20
+        for: 5m
+        labels:
+          severity: warning
+          category: security
+          type: rate_limiting
+        annotations:
+          summary: "Rate limit exceeded multiple times"
+          description: "Rate limit exceeded: {{ $value }} times per minute"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/rate-limit"
+
+      - alert: SQLInjectionAttempt
+        expr: rate(sql_injection_attempts_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          category: security
+          type: injection_attack
+        annotations:
+          summary: "SQL injection attempt detected"
+          description: "SQL injection attempts detected: {{ $value }}"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/sql-injection"
+
+  # ============================================================================
+  # BUSINESS ALERTS
+  # ============================================================================
+
+  - name: business_alerts
+    rules:
+      - alert: LowConversionRate
+        expr: business_conversion_rate < 2.0
+        for: 15m
+        labels:
+          severity: warning
+          category: business
+          metric: conversion
+        annotations:
+          summary: "Low conversion rate detected"
+          description: "Conversion rate is {{ $value }}%, below threshold of 2.0%"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/low-conversion"
+
+      - alert: HighCustomerChurn
+        expr: rate(customer_churn_events_total[1h]) > 50
+        for: 10m
+        labels:
+          severity: critical
+          category: business
+          metric: churn
+        annotations:
+          summary: "High customer churn rate"
+          description: "Customer churn rate: {{ $value }} per hour"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/high-churn"
+
+      - alert: RevenueDrop
+        expr: (business_revenue_current - business_revenue_previous) / business_revenue_previous * 100 < -10
+        for: 15m
+        labels:
+          severity: critical
+          category: business
+          metric: revenue
+        annotations:
+          summary: "Significant revenue drop detected"
+          description: "Revenue dropped by {{ $value }}% compared to previous period"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/revenue-drop"
+
+      - alert: SystemPerformanceDegraded
+        expr: business_system_performance_score < 80
+        for: 10m
+        labels:
+          severity: warning
+          category: business
+          metric: performance
+        annotations:
+          summary: "System performance degraded"
+          description: "System performance score: {{ $value }}%, below threshold of 80%"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/system-performance"
+
+  # ============================================================================
+  # DEPLOYMENT ALERTS
+  # ============================================================================
+
+  - name: deployment_alerts
+    rules:
+      - alert: DeploymentFailed
+        expr: deployment_status{status="failed"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          category: deployment
+          type: failure
+        annotations:
+          summary: "Deployment failed"
+          description: "Deployment to {{ $labels.environment }} failed"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/deployment-failed"
+
+      - alert: RollbackTriggered
+        expr: deployment_rollback_total > 0
+        for: 1m
+        labels:
+          severity: warning
+          category: deployment
+          type: rollback
+        annotations:
+          summary: "Deployment rollback triggered"
+          description: "Deployment rollback occurred for {{ $labels.service }}"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/deployment-rollback"
+
+      - alert: ServiceUnavailable
+        expr: probe_success == 0
+        for: 3m
+        labels:
+          severity: critical
+          category: deployment
+          type: service_unavailable
+        annotations:
+          summary: "Service unavailable"
+          description: "{{ $labels.service }} is unavailable"
+          runbook_url: "https://docs.intelligent-retail-analytics.com/runbooks/service-unavailable"

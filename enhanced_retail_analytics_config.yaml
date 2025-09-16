@@ -1,0 +1,39 @@
+advanced_features:
+  ai_agents: true
+  multimodal_processing: true
+  nemo_integration: true
+  rag_enabled: true
+  real_time_insights: true
+ai_capabilities:
+  agents: AI agent frameworks
+  llama_factory: Advanced model training
+  multimodal: Advanced multimodal processing
+  nemo: NVIDIA NeMo conversational AI
+  rag: Retrieval-Augmented Generation
+cloud_storage_buckets:
+  documents: intelligent-retail-analytics-retail-documents
+  models: intelligent-retail-analytics-retail-models
+  multimodal: intelligent-retail-analytics-retail-multimodal
+dataset_location: us
+debug_config:
+  enabled: true
+  log_level: DEBUG
+  performance_monitoring: true
+enhanced_datasets:
+- retail_analytics_v2
+- retail_models_v2
+- retail_insights_v2
+- retail_agents
+- retail_rag
+- retail_nemo
+enhanced_models:
+  multimodal_model: retail_models_v2.enhanced_multimodal_model
+  nemo_model: retail_models_v2.nemo_conversational
+  rag_model: retail_models_v2.rag_enhanced_model
+performance_targets:
+  ai_generation_max_tokens: 4096
+  max_embeddings_batch_size: 500
+  query_timeout_seconds: 300
+  vector_search_top_k: 20
+project_id: intelligent-retail-analytics
+vertex_ai_connection: enhanced-vertex-connection
