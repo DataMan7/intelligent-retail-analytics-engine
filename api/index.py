@@ -328,9 +328,13 @@ def generate_html_page() -> str:
 @app.get("/", response_class=HTMLResponse)
 async def home():
     """Main dashboard page"""
+    print("[DEBUG] FastAPI: Handling root path request")
     try:
-        return generate_html_page()
+        html_content = generate_html_page()
+        print(f"[DEBUG] FastAPI: Generated HTML length: {len(html_content)}")
+        return html_content
     except Exception as e:
+        print(f"[ERROR] FastAPI: HTML generation failed: {str(e)}")
         # Fallback HTML in case of any issues
         return f"""
         <!DOCTYPE html>
@@ -345,6 +349,7 @@ async def home():
                 <a href="/api/test/dashboard" style="background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Test Dashboard API</a>
             </div>
             <p>If you see this page, the system is working correctly!</p>
+            <p>Error: {str(e)}</p>
         </body>
         </html>
         """
@@ -352,14 +357,18 @@ async def home():
 @app.get("/api/test/dashboard")
 async def test_dashboard():
     """Test dashboard API"""
+    print("[DEBUG] FastAPI: Handling dashboard API request")
     try:
-        return JSONResponse({
+        response_data = {
             "status": "success",
             "timestamp": datetime.now().isoformat(),
             "data": MOCK_DASHBOARD_DATA,
             "message": "Dashboard data retrieved successfully"
-        })
+        }
+        print(f"[DEBUG] FastAPI: Dashboard response data keys: {list(response_data.keys())}")
+        return JSONResponse(response_data)
     except Exception as e:
+        print(f"[ERROR] FastAPI: Dashboard API error: {str(e)}")
         return JSONResponse({
             "status": "error",
             "timestamp": datetime.now().isoformat(),
@@ -442,14 +451,18 @@ async def test_health():
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""
+    print("[DEBUG] FastAPI: Handling health check request")
     try:
-        return JSONResponse({
+        response_data = {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
             "version": "3.0.0",
             "environment": "vercel"
-        })
+        }
+        print(f"[DEBUG] FastAPI: Health check response: {response_data['status']}")
+        return JSONResponse(response_data)
     except Exception as e:
+        print(f"[ERROR] FastAPI: Health check error: {str(e)}")
         return JSONResponse({
             "status": "error",
             "timestamp": datetime.now().isoformat(),
@@ -457,319 +470,7 @@ async def health_check():
             "message": "Health check failed"
         }, status_code=500)
 
-# Vercel handler - Simplified for serverless
-def handler(event, context):
-    """Vercel serverless function handler"""
-    print(f"[DEBUG] Handler called with event: {event}")
-    print(f"[DEBUG] Context: {context}")
-    try:
-        # Simple routing for Vercel
-        path = event.get('path', '/')
-        method = event.get('httpMethod', 'GET')
-        print(f"[DEBUG] Routing request: {method} {path}")
-
-        # Handle different routes
-        if path == '/' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "text/html",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": generate_html_page()
-            }
-
-        elif path == '/api/test/dashboard' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "success",
-                    "timestamp": datetime.now().isoformat(),
-                    "data": MOCK_DASHBOARD_DATA,
-                    "message": "Dashboard data retrieved successfully"
-                })
-            }
-
-        elif path == '/api/test/products' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "success",
-                    "timestamp": datetime.now().isoformat(),
-                    "data": MOCK_PRODUCT_DATA,
-                    "total_products": len(MOCK_PRODUCT_DATA),
-                    "message": "Product performance data retrieved successfully"
-                })
-            }
-
-        elif path == '/api/test/categories' and method == 'GET':
-            try:
-                categories = {}
-                for product in MOCK_PRODUCT_DATA:
-                    cat = product['category']
-                    if cat not in categories:
-                        categories[cat] = {'total_revenue': 0, 'products': 0, 'avg_price': 0}
-                    categories[cat]['total_revenue'] += product['revenue']
-                    categories[cat]['products'] += 1
-                    categories[cat]['avg_price'] = categories[cat]['total_revenue'] / categories[cat]['products']
-
-                return {
-                    "statusCode": 200,
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    },
-                    "body": json.dumps({
-                        "status": "success",
-                        "timestamp": datetime.now().isoformat(),
-                        "data": categories,
-                        "message": "Category analysis completed successfully"
-                    })
-                }
-            except Exception as e:
-                return {
-                    "statusCode": 500,
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    },
-                    "body": json.dumps({
-                        "status": "error",
-                        "timestamp": datetime.now().isoformat(),
-                        "error": str(e),
-                        "message": "Category analysis failed"
-                    })
-                }
-
-        elif path == '/api/test/health' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "healthy",
-                    "timestamp": datetime.now().isoformat(),
-                    "version": "3.0.0",
-                    "quality_ready": True,
-                    "quality_score": "Excellent (95-98%)",
-                    "message": "System is healthy and high-quality!"
-                })
-            }
-
-        elif path == '/api/health' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "healthy",
-                    "timestamp": datetime.now().isoformat(),
-                    "version": "3.0.0",
-                    "environment": "vercel"
-                })
-            }
-
-        else:
-            return {
-                "statusCode": 404,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "error",
-                    "message": "Endpoint not found",
-                    "path": path,
-                    "method": method
-                })
-            }
-
-    except Exception as e:
-        print(f"[ERROR] Handler exception: {str(e)}")
-        import traceback
-        print(f"[ERROR] Traceback: {traceback.format_exc()}")
-        return {
-            "statusCode": 500,
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            },
-            "body": json.dumps({
-                "status": "error",
-                "message": "Internal server error",
-                "error": str(e),
-                "timestamp": datetime.now().isoformat()
-            })
-        }
-
-# For local development
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-# Vercel handler - Simplified for serverless
-def handler(event, context):
-    """Vercel serverless function handler"""
-    try:
-        # Simple routing for Vercel
-        path = event.get('path', '/')
-        method = event.get('httpMethod', 'GET')
-
-        # Handle different routes
-        if path == '/' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "text/html",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": generate_html_page()
-            }
-
-        elif path == '/api/test/dashboard' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "success",
-                    "timestamp": datetime.now().isoformat(),
-                    "data": MOCK_DASHBOARD_DATA,
-                    "message": "Dashboard data retrieved successfully"
-                })
-            }
-
-        elif path == '/api/test/products' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "success",
-                    "timestamp": datetime.now().isoformat(),
-                    "data": MOCK_PRODUCT_DATA,
-                    "total_products": len(MOCK_PRODUCT_DATA),
-                    "message": "Product performance data retrieved successfully"
-                })
-            }
-
-        elif path == '/api/test/categories' and method == 'GET':
-            try:
-                categories = {}
-                for product in MOCK_PRODUCT_DATA:
-                    cat = product['category']
-                    if cat not in categories:
-                        categories[cat] = {'total_revenue': 0, 'products': 0, 'avg_price': 0}
-                    categories[cat]['total_revenue'] += product['revenue']
-                    categories[cat]['products'] += 1
-                    categories[cat]['avg_price'] = categories[cat]['total_revenue'] / categories[cat]['products']
-
-                return {
-                    "statusCode": 200,
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    },
-                    "body": json.dumps({
-                        "status": "success",
-                        "timestamp": datetime.now().isoformat(),
-                        "data": categories,
-                        "message": "Category analysis completed successfully"
-                    })
-                }
-            except Exception as e:
-                return {
-                    "statusCode": 500,
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    },
-                    "body": json.dumps({
-                        "status": "error",
-                        "timestamp": datetime.now().isoformat(),
-                        "error": str(e),
-                        "message": "Category analysis failed"
-                    })
-                }
-
-        elif path == '/api/test/health' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "healthy",
-                    "timestamp": datetime.now().isoformat(),
-                    "version": "3.0.0",
-                    "quality_ready": True,
-                    "quality_score": "Excellent (95-98%)",
-                    "message": "System is healthy and high-quality!"
-                })
-            }
-
-        elif path == '/api/health' and method == 'GET':
-            return {
-                "statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "healthy",
-                    "timestamp": datetime.now().isoformat(),
-                    "version": "3.0.0",
-                    "environment": "vercel"
-                })
-            }
-
-        else:
-            return {
-                "statusCode": 404,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                "body": json.dumps({
-                    "status": "error",
-                    "message": "Endpoint not found",
-                    "path": path,
-                    "method": method
-                })
-            }
-
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            },
-            "body": json.dumps({
-                "status": "error",
-                "message": "Internal server error",
-                "error": str(e),
-                "timestamp": datetime.now().isoformat()
-            })
-        }
+# Export the FastAPI app for Vercel ASGI deployment
 
 # For local development
 if __name__ == "__main__":
