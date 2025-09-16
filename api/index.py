@@ -310,76 +310,64 @@ def generate_html_page() -> str:
 
             switch(feature) {{
                 case 'multimodal':
-                    demoContent = `
-                        <div class="result-box">
-                            <h4>🤖 Multimodal Embeddings Demo</h4>
-                            <p><strong>Technology:</strong> Combines text and image processing</p>
-                            <p><strong>Use Case:</strong> Product understanding from descriptions and images</p>
-                            <p><strong>BigQuery Integration:</strong> ML.GENERATE_EMBEDDING with multimodal data</p>
-                            <p><strong>Benefits:</strong> 94% accuracy in product categorization</p>
-                            <button class="btn" onclick="runMultimodalTest()">🔬 Run Multimodal Analysis</button>
-                        </div>
-                    `;
+                    demoContent = '<div class="result-box">' +
+                        '<h4>🤖 Multimodal Embeddings Demo</h4>' +
+                        '<p><strong>Technology:</strong> Combines text and image processing</p>' +
+                        '<p><strong>Use Case:</strong> Product understanding from descriptions and images</p>' +
+                        '<p><strong>BigQuery Integration:</strong> ML.GENERATE_EMBEDDING with multimodal data</p>' +
+                        '<p><strong>Benefits:</strong> 94% accuracy in product categorization</p>' +
+                        '<button class="btn" onclick="runMultimodalTest()">🔬 Run Multimodal Analysis</button>' +
+                        '</div>';
                     break;
                 case 'vector':
-                    demoContent = `
-                        <div class="result-box">
-                            <h4>🔍 Vector Search Demo</h4>
-                            <p><strong>Technology:</strong> IVF indexing with cosine similarity</p>
-                            <p><strong>Use Case:</strong> Finding similar products instantly</p>
-                            <p><strong>BigQuery Integration:</strong> VECTOR_SEARCH function</p>
-                            <p><strong>Performance:</strong> Sub-100ms query response</p>
-                            <button class="btn" onclick="runVectorSearchTest()">🔍 Test Vector Search</button>
-                        </div>
-                    `;
+                    demoContent = '<div class="result-box">' +
+                        '<h4>🔍 Vector Search Demo</h4>' +
+                        '<p><strong>Technology:</strong> IVF indexing with cosine similarity</p>' +
+                        '<p><strong>Use Case:</strong> Finding similar products instantly</p>' +
+                        '<p><strong>BigQuery Integration:</strong> VECTOR_SEARCH function</p>' +
+                        '<p><strong>Performance:</strong> Sub-100ms query response</p>' +
+                        '<button class="btn" onclick="runVectorSearchTest()">🔍 Test Vector Search</button>' +
+                        '</div>';
                     break;
                 case 'generative':
-                    demoContent = `
-                        <div class="result-box">
-                            <h4>🧠 Generative AI Demo</h4>
-                            <p><strong>Technology:</strong> AI.GENERATE_TEXT with business context</p>
-                            <p><strong>Use Case:</strong> Automated business insights and summaries</p>
-                            <p><strong>BigQuery Integration:</strong> Direct SQL AI generation</p>
-                            <p><strong>Output:</strong> Executive-ready business intelligence</p>
-                            <button class="btn" onclick="runGenerativeAITest()">🧠 Generate Business Insights</button>
-                        </div>
-                    `;
+                    demoContent = '<div class="result-box">' +
+                        '<h4>🧠 Generative AI Demo</h4>' +
+                        '<p><strong>Technology:</strong> AI.GENERATE_TEXT with business context</p>' +
+                        '<p><strong>Use Case:</strong> Automated business insights and summaries</p>' +
+                        '<p><strong>BigQuery Integration:</strong> Direct SQL AI generation</p>' +
+                        '<p><strong>Output:</strong> Executive-ready business intelligence</p>' +
+                        '<button class="btn" onclick="runGenerativeAITest()">🧠 Generate Business Insights</button>' +
+                        '</div>';
                     break;
                 case 'analytics':
-                    demoContent = `
-                        <div class="result-box">
-                            <h4>📊 Real-time Analytics Demo</h4>
-                            <p><strong>Technology:</strong> Live dashboard with streaming data</p>
-                            <p><strong>Use Case:</strong> Real-time business monitoring</p>
-                            <p><strong>BigQuery Integration:</strong> Continuous data pipelines</p>
-                            <p><strong>Update Frequency:</strong> Real-time with <2s latency</p>
-                            <button class="btn" onclick="runRealtimeAnalyticsTest()">📊 View Live Metrics</button>
-                        </div>
-                    `;
+                    demoContent = '<div class="result-box">' +
+                        '<h4>📊 Real-time Analytics Demo</h4>' +
+                        '<p><strong>Technology:</strong> Live dashboard with streaming data</p>' +
+                        '<p><strong>Use Case:</strong> Real-time business monitoring</p>' +
+                        '<p><strong>BigQuery Integration:</strong> Continuous data pipelines</p>' +
+                        '<p><strong>Update Frequency:</strong> Real-time with <2s latency</p>' +
+                        '<button class="btn" onclick="runRealtimeAnalyticsTest()">📊 View Live Metrics</button>' +
+                        '</div>';
                     break;
                 case 'security':
-                    demoContent = `
-                        <div class="result-box">
-                            <h4>🔒 Enterprise Security Demo</h4>
-                            <p><strong>Technology:</strong> OWASP compliant security framework</p>
-                            <p><strong>Use Case:</strong> Enterprise-grade data protection</p>
-                            <p><strong>BigQuery Integration:</strong> IAM, VPC, encryption</p>
-                            <p><strong>Compliance:</strong> SOC 2, GDPR, HIPAA ready</p>
-                            <button class="btn" onclick="runSecurityAuditTest()">🔒 Run Security Check</button>
-                        </div>
-                    `;
+                    demoContent = '<div class="result-box">' +
+                        '<h4>🔒 Enterprise Security Demo</h4>' +
+                        '<p><strong>Technology:</strong> OWASP compliant security framework</p>' +
+                        '<p><strong>Use Case:</strong> Enterprise-grade data protection</p>' +
+                        '<p><strong>BigQuery Integration:</strong> IAM, VPC, encryption</p>' +
+                        '<p><strong>Compliance:</strong> SOC 2, GDPR, HIPAA ready</p>' +
+                        '<button class="btn" onclick="runSecurityAuditTest()">🔒 Run Security Check</button>' +
+                        '</div>';
                     break;
                 case 'performance':
-                    demoContent = `
-                        <div class="result-box">
-                            <h4>⚡ High Performance Demo</h4>
-                            <p><strong>Technology:</strong> Optimized BigQuery queries with caching</p>
-                            <p><strong>Use Case:</strong> Enterprise-scale data processing</p>
-                            <p><strong>BigQuery Integration:</strong> Query optimization and partitioning</p>
-                            <p><strong>Scale:</strong> Handles 1M+ products with <2s response</p>
-                            <button class="btn" onclick="runPerformanceTest()">⚡ Test Performance</button>
-                        </div>
-                    `;
+                    demoContent = '<div class="result-box">' +
+                        '<h4>⚡ High Performance Demo</h4>' +
+                        '<p><strong>Technology:</strong> Optimized BigQuery queries with caching</p>' +
+                        '<p><strong>Use Case:</strong> Enterprise-scale data processing</p>' +
+                        '<p><strong>BigQuery Integration:</strong> Query optimization and partitioning</p>' +
+                        '<p><strong>Scale:</strong> Handles 1M+ products with <2s response</p>' +
+                        '<button class="btn" onclick="runPerformanceTest()">⚡ Test Performance</button>' +
+                        '</div>';
                     break;
             }}
 
@@ -387,18 +375,19 @@ def generate_html_page() -> str:
         }}
 
         async function runMultimodalTest() {{
-            showResult('🤖 Multimodal Analysis Results', {{
+            const testData = {{
                 "status": "success",
                 "analysis": "Product image and description processed successfully",
                 "confidence": "94%",
                 "categories": ["Electronics", "Smartphones", "Premium Devices"],
                 "features": ["Touch screen", "Camera", "Battery life"],
                 "embedding_generated": true
-            }});
+            }};
+            showResult('🤖 Multimodal Analysis Results', testData);
         }}
 
         async function runVectorSearchTest() {{
-            showResult('🔍 Vector Search Results', {{
+            const testData = {{
                 "status": "success",
                 "query": "wireless headphones",
                 "results": [
@@ -408,22 +397,24 @@ def generate_html_page() -> str:
                 ],
                 "search_time": "45ms",
                 "total_matches": 156
-            }});
+            }};
+            showResult('🔍 Vector Search Results', testData);
         }}
 
         async function runGenerativeAITest() {{
-            showResult('🧠 Business Insights Generated', {{
+            const testData = {{
                 "status": "success",
                 "insight_type": "Executive Summary",
                 "generated_content": "Electronics category shows 12.5% growth driven by premium smartphone sales. Customer satisfaction improved 8.3% following product recommendation enhancements. Revenue optimization algorithms identified 15% uplift potential through dynamic pricing.",
                 "confidence": "92%",
                 "data_sources": ["Sales data", "Customer feedback", "Market analysis"],
                 "generation_time": "1.2s"
-            }});
+            }};
+            showResult('🧠 Business Insights Generated', testData);
         }}
 
         async function runRealtimeAnalyticsTest() {{
-            showResult('📊 Live Analytics Dashboard', {{
+            const testData = {{
                 "status": "success",
                 "timestamp": new Date().toISOString(),
                 "live_metrics": {{
@@ -435,11 +426,12 @@ def generate_html_page() -> str:
                 }},
                 "data_freshness": "< 30 seconds",
                 "update_frequency": "real-time"
-            }});
+            }};
+            showResult('📊 Live Analytics Dashboard', testData);
         }}
 
         async function runSecurityAuditTest() {{
-            showResult('🔒 Security Audit Results', {{
+            const testData = {{
                 "status": "compliant",
                 "audit_timestamp": new Date().toISOString(),
                 "security_checks": {{
@@ -451,7 +443,8 @@ def generate_html_page() -> str:
                 }},
                 "overall_score": "98/100",
                 "last_penetration_test": "2024-09-01"
-            }});
+            }};
+            showResult('🔒 Security Audit Results', testData);
         }}
 
         async function runPerformanceTest() {{
@@ -461,9 +454,9 @@ def generate_html_page() -> str:
                 const endTime = Date.now();
                 const responseTime = endTime - startTime;
 
-                showResult('⚡ Performance Test Results', {{
+                const testData = {{
                     "status": "success",
-                    "response_time": `${{responseTime}}ms`,
+                    "response_time": responseTime + "ms",
                     "performance_rating": responseTime < 500 ? "Excellent" : responseTime < 1000 ? "Good" : "Needs Optimization",
                     "serverless_benefits": [
                         "Auto-scaling",
@@ -477,9 +470,14 @@ def generate_html_page() -> str:
                         "Index optimization",
                         "CDN acceleration"
                     ]
-                }});
+                }};
+                showResult('⚡ Performance Test Results', testData);
             }} catch (error) {{
-                showResult('❌ Performance Test Error', {{ error: error.message }});
+                const errorData = {{
+                    "status": "error",
+                    "error": error.message
+                }};
+                showResult('❌ Performance Test Error', errorData);
             }}
         }}
     </script>
