@@ -469,26 +469,57 @@ def generate_html_page() -> str:
             transform: translateY(0);
         }}
 
-        .btn.active {{
+        .btn.active.success {{
+            background: var(--gradient-secondary);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+            animation: successPulse 2s infinite;
+            border: 2px solid var(--color-success);
+        }}
+
+        .btn.active.error {{
             background: var(--gradient-accent);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-            animation: pulse 2s infinite;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+            animation: errorPulse 2s infinite;
+            border: 2px solid var(--color-error);
         }}
 
-        .btn.active::before {{
+        .btn.active.success::before {{
             left: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
         }}
 
-        @keyframes pulse {{
+        .btn.active.error::before {{
+            left: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }}
+
+        @keyframes successPulse {{
             0% {{
-                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+                transform: translateY(-2px) scale(1.02);
             }}
             50% {{
-                box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+                box-shadow: 0 0 35px rgba(16, 185, 129, 0.7);
+                transform: translateY(-3px) scale(1.03);
             }}
             100% {{
-                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+                transform: translateY(-2px) scale(1.02);
+            }}
+        }}
+
+        @keyframes errorPulse {{
+            0% {{
+                box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+                transform: translateY(-2px) scale(1.02);
+            }}
+            50% {{
+                box-shadow: 0 0 35px rgba(239, 68, 68, 0.7);
+                transform: translateY(-3px) scale(1.03);
+            }}
+            100% {{
+                box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+                transform: translateY(-2px) scale(1.02);
             }}
         }}
 
@@ -539,22 +570,47 @@ def generate_html_page() -> str:
             border-left-color: var(--color-secondary);
         }}
 
-        .feature-item.active {{
-            border-left-color: var(--color-accent);
+        .feature-item.active.success {{
+            border-left-color: var(--color-success);
             background: var(--color-surface);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
-            animation: featurePulse 2s infinite;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+            animation: featureSuccessPulse 2s infinite;
         }}
 
-        @keyframes featurePulse {{
+        .feature-item.active.error {{
+            border-left-color: var(--color-error);
+            background: var(--color-surface);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+            animation: featureErrorPulse 2s infinite;
+        }}
+
+        @keyframes featureSuccessPulse {{
             0% {{
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+                transform: translateY(-2px) scale(1.01);
             }}
             50% {{
-                box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+                box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+                transform: translateY(-3px) scale(1.02);
             }}
             100% {{
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+                transform: translateY(-2px) scale(1.01);
+            }}
+        }}
+
+        @keyframes featureErrorPulse {{
+            0% {{
+                box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+                transform: translateY(-2px) scale(1.01);
+            }}
+            50% {{
+                box-shadow: 0 0 35px rgba(239, 68, 68, 0.5);
+                transform: translateY(-3px) scale(1.02);
+            }}
+            100% {{
+                box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+                transform: translateY(-2px) scale(1.01);
             }}
         }}
 
@@ -879,23 +935,23 @@ def generate_html_page() -> str:
             }}
         }}
 
-        // Global state for button toggles
+        // Global state for button toggles with status tracking
         const buttonStates = {{
-            dashboard: false,
-            products: false,
-            categories: false,
-            health: false
+            dashboard: {{ active: false, status: 'idle' }},
+            products: {{ active: false, status: 'idle' }},
+            categories: {{ active: false, status: 'idle' }},
+            health: {{ active: false, status: 'idle' }}
         }};
 
-        async function runDashboardTest() {{
+        async function runDashboardTest(event) {{
             const button = event.target;
-            const isActive = buttonStates.dashboard;
+            const isActive = buttonStates.dashboard.active;
 
             if (isActive) {{
                 // Turn OFF - hide results
                 hideResult('dashboard');
-                buttonStates.dashboard = false;
-                button.classList.remove('active');
+                buttonStates.dashboard = {{ active: false, status: 'idle' }};
+                button.classList.remove('active', 'success', 'error');
                 button.innerHTML = '📊 Dashboard Data';
                 console.log('Dashboard test turned OFF');
             }} else {{
@@ -909,28 +965,30 @@ def generate_html_page() -> str:
                     const data = await response.json();
                     console.log('Dashboard test successful:', data);
                     showResult('📊 Dashboard Test Results', data, 'dashboard');
-                    buttonStates.dashboard = true;
-                    button.classList.add('active');
+                    buttonStates.dashboard = {{ active: true, status: 'success' }};
+                    button.classList.remove('error');
+                    button.classList.add('active', 'success');
                     button.innerHTML = '📊 Dashboard Data ✅';
                 }} catch (error) {{
                     console.error('Dashboard test error:', error);
                     showResult('❌ Dashboard Test Error', {{ error: error.message, status: 'failed' }}, 'dashboard');
-                    buttonStates.dashboard = true;
-                    button.classList.add('active');
+                    buttonStates.dashboard = {{ active: true, status: 'error' }};
+                    button.classList.remove('success');
+                    button.classList.add('active', 'error');
                     button.innerHTML = '📊 Dashboard Data ❌';
                 }}
             }}
         }}
 
-        async function runProductTest() {{
+        async function runProductTest(event) {{
             const button = event.target;
-            const isActive = buttonStates.products;
+            const isActive = buttonStates.products.active;
 
             if (isActive) {{
                 // Turn OFF - hide results
                 hideResult('products');
-                buttonStates.products = false;
-                button.classList.remove('active');
+                buttonStates.products = {{ active: false, status: 'idle' }};
+                button.classList.remove('active', 'success', 'error');
                 button.innerHTML = '📦 Product Performance';
                 console.log('Product test turned OFF');
             }} else {{
@@ -944,28 +1002,30 @@ def generate_html_page() -> str:
                     const data = await response.json();
                     console.log('Product test successful:', data);
                     showResult('📦 Product Performance Test Results', data, 'products');
-                    buttonStates.products = true;
-                    button.classList.add('active');
+                    buttonStates.products = {{ active: true, status: 'success' }};
+                    button.classList.remove('error');
+                    button.classList.add('active', 'success');
                     button.innerHTML = '📦 Product Performance ✅';
                 }} catch (error) {{
                     console.error('Product test error:', error);
                     showResult('❌ Product Test Error', {{ error: error.message, status: 'failed' }}, 'products');
-                    buttonStates.products = true;
-                    button.classList.add('active');
+                    buttonStates.products = {{ active: true, status: 'error' }};
+                    button.classList.remove('success');
+                    button.classList.add('active', 'error');
                     button.innerHTML = '📦 Product Performance ❌';
                 }}
             }}
         }}
 
-        async function runCategoryTest() {{
+        async function runCategoryTest(event) {{
             const button = event.target;
-            const isActive = buttonStates.categories;
+            const isActive = buttonStates.categories.active;
 
             if (isActive) {{
                 // Turn OFF - hide results
                 hideResult('categories');
-                buttonStates.categories = false;
-                button.classList.remove('active');
+                buttonStates.categories = {{ active: false, status: 'idle' }};
+                button.classList.remove('active', 'success', 'error');
                 button.innerHTML = '📂 Category Analysis';
                 console.log('Category test turned OFF');
             }} else {{
@@ -979,28 +1039,30 @@ def generate_html_page() -> str:
                     const data = await response.json();
                     console.log('Category test successful:', data);
                     showResult('📂 Category Analysis Test Results', data, 'categories');
-                    buttonStates.categories = true;
-                    button.classList.add('active');
+                    buttonStates.categories = {{ active: true, status: 'success' }};
+                    button.classList.remove('error');
+                    button.classList.add('active', 'success');
                     button.innerHTML = '📂 Category Analysis ✅';
                 }} catch (error) {{
                     console.error('Category test error:', error);
                     showResult('❌ Category Test Error', {{ error: error.message, status: 'failed' }}, 'categories');
-                    buttonStates.categories = true;
-                    button.classList.add('active');
+                    buttonStates.categories = {{ active: true, status: 'error' }};
+                    button.classList.remove('success');
+                    button.classList.add('active', 'error');
                     button.innerHTML = '📂 Category Analysis ❌';
                 }}
             }}
         }}
 
-        async function runHealthTest() {{
+        async function runHealthTest(event) {{
             const button = event.target;
-            const isActive = buttonStates.health;
+            const isActive = buttonStates.health.active;
 
             if (isActive) {{
                 // Turn OFF - hide results
                 hideResult('health');
-                buttonStates.health = false;
-                button.classList.remove('active');
+                buttonStates.health = {{ active: false, status: 'idle' }};
+                button.classList.remove('active', 'success', 'error');
                 button.innerHTML = '❤️ System Health';
                 console.log('Health test turned OFF');
             }} else {{
@@ -1014,38 +1076,40 @@ def generate_html_page() -> str:
                     const data = await response.json();
                     console.log('Health test successful:', data);
                     showResult('❤️ System Health Test Results', data, 'health');
-                    buttonStates.health = true;
-                    button.classList.add('active');
+                    buttonStates.health = {{ active: true, status: 'success' }};
+                    button.classList.remove('error');
+                    button.classList.add('active', 'success');
                     button.innerHTML = '❤️ System Health ✅';
                 }} catch (error) {{
                     console.error('Health test error:', error);
                     showResult('❌ Health Test Error', {{ error: error.message, status: 'failed' }}, 'health');
-                    buttonStates.health = true;
-                    button.classList.add('active');
+                    buttonStates.health = {{ active: true, status: 'error' }};
+                    button.classList.remove('success');
+                    button.classList.add('active', 'error');
                     button.innerHTML = '❤️ System Health ❌';
                 }}
             }}
         }}
 
-        // Global state for AI feature demos
+        // Global state for AI feature demos with status tracking
         const featureStates = {{
-            multimodal: false,
-            vector: false,
-            generative: false,
-            analytics: false,
-            security: false,
-            performance: false
+            multimodal: {{ active: false, status: 'idle' }},
+            vector: {{ active: false, status: 'idle' }},
+            generative: {{ active: false, status: 'idle' }},
+            analytics: {{ active: false, status: 'idle' }},
+            security: {{ active: false, status: 'idle' }},
+            performance: {{ active: false, status: 'idle' }}
         }};
 
         async function showFeatureDemo(feature, event) {{
             const resultsDiv = document.getElementById('feature-demo-results');
-            const isActive = featureStates[feature];
+            const isActive = featureStates[feature].active;
 
             if (isActive) {{
                 // Turn OFF - hide results
                 hideFeatureDemo(feature);
-                featureStates[feature] = false;
-                event.currentTarget.classList.remove('active');
+                featureStates[feature] = {{ active: false, status: 'idle' }};
+                event.currentTarget.classList.remove('active', 'success', 'error');
                 console.log(`${{feature}} demo turned OFF`);
             }} else {{
                 // Turn ON - show results
@@ -1115,8 +1179,9 @@ def generate_html_page() -> str:
                 }}
 
                 resultsDiv.innerHTML = demoContent;
-                featureStates[feature] = true;
-                event.currentTarget.classList.add('active');
+                featureStates[feature] = {{ active: true, status: 'success' }};
+                event.currentTarget.classList.remove('error');
+                event.currentTarget.classList.add('active', 'success');
                 console.log(`${{feature}} demo turned ON`);
             }}
         }}
