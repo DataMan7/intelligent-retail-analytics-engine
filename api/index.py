@@ -90,7 +90,10 @@ def generate_html_page() -> str:
             --color-success: #10b981;
             --color-warning: #f59e0b;
             --color-error: #ef4444;
-            --color-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --color-background: #ffffff;
+            --color-card-background: #f8fafc;
+            --color-text-on-light: #1e293b;
+            --color-text-secondary-light: #64748b;
             --color-card: rgba(255, 255, 255, 0.95);
             --color-text-primary: #1f2937;
             --color-text-secondary: #6b7280;
@@ -109,7 +112,7 @@ def generate_html_page() -> str:
             font-family: var(--font-primary);
             background: var(--color-background);
             min-height: 100vh;
-            color: var(--color-text-primary);
+            color: var(--color-text-on-light);
             line-height: 1.6;
             font-weight: 400;
         }}
@@ -120,12 +123,12 @@ def generate_html_page() -> str:
         }}
         .header {{
             text-align: center;
-            background: var(--color-card);
+            background: var(--color-card-background);
             padding: 3rem;
             border-radius: var(--border-radius-xl);
             margin-bottom: 2rem;
             box-shadow: var(--shadow-xl);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }}
         .header h1 {{
             color: var(--color-text-primary);
@@ -163,13 +166,12 @@ def generate_html_page() -> str:
             margin-bottom: 2rem;
         }}
         .card {{
-            background: var(--color-card);
+            background: var(--color-card-background);
             border-radius: var(--border-radius-lg);
             padding: 2rem;
             box-shadow: var(--shadow-lg);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }}
         .card:hover {{
             transform: translateY(-8px) scale(1.02);
@@ -209,13 +211,12 @@ def generate_html_page() -> str:
             font-weight: 500;
         }}
         .test-section {{
-            background: var(--color-card);
+            background: var(--color-card-background);
             border-radius: var(--border-radius-lg);
             padding: 2rem;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }}
         .test-section h2 {{
             color: var(--color-text-primary);
@@ -225,7 +226,7 @@ def generate_html_page() -> str:
             font-weight: 700;
         }}
         .btn {{
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            background: linear-gradient(135deg, #000000, #333333);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -235,13 +236,28 @@ def generate_html_page() -> str:
             font-weight: 600;
             margin: 0.25rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             font-family: var(--font-primary);
+            position: relative;
+            overflow: hidden;
+        }}
+        .btn::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }}
         .btn:hover {{
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #333333, #000000);
+        }}
+        .btn:hover::before {{
+            left: 100%;
         }}
         .btn:active {{
             transform: translateY(0);
@@ -308,13 +324,12 @@ def generate_html_page() -> str:
             box-shadow: var(--shadow-md);
         }}
         .competition-info {{
-            background: var(--color-card);
+            background: var(--color-card-background);
             border-radius: var(--border-radius-lg);
             padding: 2rem;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }}
         .competition-info h3 {{
             color: var(--color-text-primary);
@@ -323,7 +338,7 @@ def generate_html_page() -> str:
             font-weight: 600;
         }}
         .solution-strengths {{
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
             border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: var(--border-radius-lg);
             padding: 2rem;
@@ -331,14 +346,14 @@ def generate_html_page() -> str:
             box-shadow: var(--shadow-md);
         }}
         .solution-strengths h2 {{
-            color: var(--color-success);
+            color: var(--color-text-on-light);
             margin-bottom: 1.5rem;
             font-family: var(--font-headline);
             font-weight: 700;
             font-size: 1.5rem;
         }}
         .solution-strengths p {{
-            color: var(--color-text-primary);
+            color: var(--color-text-on-light);
             margin-bottom: 0.75rem;
             font-weight: 500;
             line-height: 1.6;
@@ -362,7 +377,6 @@ def generate_html_page() -> str:
         <div class="header">
             <h1>🏆 Intelligent Retail Analytics Engine</h1>
             <p>Transform your retail business with AI-powered insights, real-time analytics, and enterprise-grade performance</p>
-            <div class="competition-badge">🏅 BigQuery AI Competition Winner</div>
             <div class="vercel-badge">🚀 Production Deployed on Vercel</div>
         </div>
 
@@ -468,42 +482,66 @@ def generate_html_page() -> str:
         }}
 
         async function runDashboardTest() {{
+            console.log('Running dashboard test...');
             try {{
                 const response = await fetch('/api/test/dashboard');
+                if (!response.ok) {{
+                    throw new Error(`HTTP error! status: ${{response.status}}`);
+                }}
                 const data = await response.json();
+                console.log('Dashboard test successful:', data);
                 showResult('📊 Dashboard Test Results', data);
             }} catch (error) {{
-                showResult('❌ Dashboard Test Error', {{ error: error.message }});
+                console.error('Dashboard test error:', error);
+                showResult('❌ Dashboard Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
         async function runProductTest() {{
+            console.log('Running product test...');
             try {{
                 const response = await fetch('/api/test/products');
+                if (!response.ok) {{
+                    throw new Error(`HTTP error! status: ${{response.status}}`);
+                }}
                 const data = await response.json();
+                console.log('Product test successful:', data);
                 showResult('📦 Product Performance Test Results', data);
             }} catch (error) {{
-                showResult('❌ Product Test Error', {{ error: error.message }});
+                console.error('Product test error:', error);
+                showResult('❌ Product Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
         async function runCategoryTest() {{
+            console.log('Running category test...');
             try {{
                 const response = await fetch('/api/test/categories');
+                if (!response.ok) {{
+                    throw new Error(`HTTP error! status: ${{response.status}}`);
+                }}
                 const data = await response.json();
+                console.log('Category test successful:', data);
                 showResult('📂 Category Analysis Test Results', data);
             }} catch (error) {{
-                showResult('❌ Category Test Error', {{ error: error.message }});
+                console.error('Category test error:', error);
+                showResult('❌ Category Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
         async function runHealthTest() {{
+            console.log('Running health test...');
             try {{
                 const response = await fetch('/api/test/health');
+                if (!response.ok) {{
+                    throw new Error(`HTTP error! status: ${{response.status}}`);
+                }}
                 const data = await response.json();
+                console.log('Health test successful:', data);
                 showResult('❤️ System Health Test Results', data);
             }} catch (error) {{
-                showResult('❌ Health Test Error', {{ error: error.message }});
+                console.error('Health test error:', error);
+                showResult('❌ Health Test Error', {{ error: error.message, status: 'failed' }});
             }}
         }}
 
