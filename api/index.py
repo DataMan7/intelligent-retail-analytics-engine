@@ -76,121 +76,310 @@ def generate_html_page() -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏆 Intelligent Retail Analytics Engine v3.0 - High-Quality Solution</title>
+    <title>🏆 Intelligent Retail Analytics Engine - Modern 2025 Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --font-primary: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --font-headline: 'Baloo 2', 'Poppins', system-ui, sans-serif;
-            --color-primary: #6366f1;
-            --color-secondary: #8b5cf6;
-            --color-accent: #06b6d4;
-            --color-success: #10b981;
-            --color-warning: #f59e0b;
-            --color-error: #ef4444;
-            --color-background: #ffffff;
-            --color-card-background: #f8fafc;
-            --color-text-on-light: #1e293b;
-            --color-text-secondary-light: #64748b;
-            --color-card: rgba(255, 255, 255, 0.95);
-            --color-text-primary: #1f2937;
-            --color-text-secondary: #6b7280;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --border-radius-sm: 0.375rem;
-            --border-radius-md: 0.5rem;
-            --border-radius-lg: 0.75rem;
-            --border-radius-xl: 1rem;
+            /* Modern 2025 Dashboard Color Palette */
+            --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+            /* Dark Theme Backgrounds */
+            --color-background: #0a0a0a;
+            --color-surface: #111111;
+            --color-surface-elevated: #1a1a1a;
+            --color-surface-hover: #222222;
+
+            /* Professional Accent Colors */
+            --color-primary: #3b82f6;        /* Modern blue */
+            --color-primary-hover: #2563eb;
+            --color-secondary: #8b5cf6;      /* Professional purple */
+            --color-accent: #06b6d4;        /* Cyan accent */
+            --color-success: #10b981;       /* Green */
+            --color-warning: #f59e0b;       /* Amber */
+            --color-error: #ef4444;         /* Red */
+
+            /* Data Visualization Colors */
+            --color-chart-1: #3b82f6;        /* Blue */
+            --color-chart-2: #8b5cf6;        /* Purple */
+            --color-chart-3: #06b6d4;        /* Cyan */
+            --color-chart-4: #10b981;       /* Green */
+            --color-chart-5: #f59e0b;       /* Amber */
+            --color-chart-6: #ef4444;       /* Red */
+
+            /* Text Colors */
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #64748b;
+
+            /* Border and Dividers */
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3b82f6;
+
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-secondary: linear-gradient(135deg, #06b6d4, #10b981);
+            --gradient-surface: linear-gradient(135deg, #1a1a1a, #111111);
+            --gradient-accent: linear-gradient(135deg, #f59e0b, #ef4444);
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
         }}
 
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+
         body {{
             font-family: var(--font-primary);
             background: var(--color-background);
-            min-height: 100vh;
-            color: var(--color-text-on-light);
+            color: var(--color-text-primary);
             line-height: 1.6;
             font-weight: 400;
+            min-height: 100vh;
+            overflow-x: hidden;
         }}
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {{
+            width: 8px;
+        }}
+
+        ::-webkit-scrollbar-track {{
+            background: var(--color-surface);
+        }}
+
+        ::-webkit-scrollbar-thumb {{
+            background: var(--color-border);
+            border-radius: var(--radius-xl);
+        }}
+
+        ::-webkit-scrollbar-thumb:hover {{
+            background: var(--color-border-light);
+        }}
+
         .container {{
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: var(--spacing-xl);
         }}
+
+        /* Modern Navigation Bar */
+        .nav-bar {{
+            background: var(--color-surface-elevated);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-md) var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            border: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }}
+
+        .nav-brand {{
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }}
+
+        .nav-brand::before {{
+            content: '📊';
+            font-size: 1.8rem;
+        }}
+
+        .nav-actions {{
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+        }}
+
+        .nav-button {{
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }}
+
+        .nav-button:hover {{
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }}
+
         .header {{
             text-align: center;
-            background: var(--color-card-background);
-            padding: 3rem;
-            border-radius: var(--border-radius-xl);
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-xl);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: var(--gradient-surface);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-2xl);
+            margin-bottom: var(--spacing-xl);
+            border: 1px solid var(--color-border);
+            position: relative;
+            overflow: hidden;
         }}
+
+        .header::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }}
+
+        .header-content {{
+            position: relative;
+            z-index: 1;
+        }}
+
         .header h1 {{
             color: var(--color-text-primary);
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            font-family: var(--font-headline);
+            font-size: 3.5rem;
+            margin-bottom: var(--spacing-md);
             font-weight: 800;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            line-height: 1.1;
         }}
-        .header p {{
+
+        .header-subtitle {{
             color: var(--color-text-secondary);
             font-size: 1.25rem;
             font-weight: 400;
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 700px;
+            margin: 0 auto var(--spacing-lg);
+            line-height: 1.6;
         }}
-        .competition-badge {{
-            background: linear-gradient(135deg, var(--color-warning), var(--color-error));
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 2rem;
-            display: inline-block;
-            margin: 1rem 0;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: var(--shadow-md);
+
+        .status-indicators {{
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
         }}
+
+        .status-item {{
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+        }}
+
+        .status-dot {{
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-success);
+        }}
+
+        .status-dot.offline {{
+            background: var(--color-error);
+        }}
+
+        .status-text {{
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }}
+
         .dashboard-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
         }}
+
         .card {{
-            background: var(--color-card-background);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
+            background: var(--color-surface-elevated);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
             box-shadow: var(--shadow-lg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-normal);
+            border: 1px solid var(--color-border);
+            position: relative;
+            overflow: hidden;
         }}
+
+        .card::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }}
+
         .card:hover {{
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-8px);
             box-shadow: var(--shadow-xl);
         }}
+
         .card h3 {{
             color: var(--color-text-primary);
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-md);
             font-size: 1.25rem;
-            font-family: var(--font-headline);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
         }}
+
+        .card-icon {{
+            font-size: 1.5rem;
+        }}
+
         .metric {{
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--color-primary);
-            margin-bottom: 0.25rem;
-            font-family: var(--font-headline);
+            margin-bottom: var(--spacing-xs);
+            font-family: var(--font-mono);
         }}
+
         .metric-label {{
             color: var(--color-text-secondary);
             font-size: 0.875rem;
@@ -198,49 +387,63 @@ def generate_html_page() -> str:
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }}
+
         .insights-list {{
             list-style: none;
             padding: 0;
         }}
+
         .insights-list li {{
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            margin: 0.5rem 0;
-            padding: 1rem;
-            border-radius: var(--border-radius-md);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            margin: var(--spacing-sm) 0;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
             border-left: 4px solid var(--color-primary);
             font-weight: 500;
         }}
+
         .test-section {{
-            background: var(--color-card-background);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
+            background: var(--color-surface-elevated);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--color-border);
         }}
+
         .test-section h2 {{
             color: var(--color-text-primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-lg);
             font-size: 1.875rem;
-            font-family: var(--font-headline);
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
         }}
+
+        .test-section h2::before {{
+            content: '🧪';
+            font-size: 1.5rem;
+        }}
+
         .btn {{
             background: linear-gradient(135deg, #000000, #333333);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
-            margin: 0.25rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin: var(--spacing-xs);
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
             font-family: var(--font-primary);
             position: relative;
             overflow: hidden;
+            min-width: 140px;
         }}
+
         .btn::before {{
             content: '';
             position: absolute;
@@ -251,228 +454,362 @@ def generate_html_page() -> str:
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }}
+
         .btn:hover {{
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-lg);
             background: linear-gradient(135deg, #333333, #000000);
         }}
+
         .btn:hover::before {{
             left: 100%;
         }}
+
         .btn:active {{
             transform: translateY(0);
         }}
+
         .result-box {{
-            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
-            border: 1px solid rgba(226, 232, 240, 0.5);
-            border-radius: var(--border-radius-md);
-            padding: 1.25rem;
-            margin: 0.75rem 0;
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+            font-family: var(--font-mono);
             white-space: pre-wrap;
             font-size: 0.875rem;
             box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--color-accent);
         }}
+
         .status-indicator {{
             display: inline-block;
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            margin-right: 0.5rem;
+            margin-right: var(--spacing-sm);
         }}
+
         .status-online {{ background: var(--color-success); }}
         .status-offline {{ background: var(--color-error); }}
+
         .feature-list {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-            margin: 1.5rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
         }}
+
         .feature-item {{
-            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
-            padding: 1.25rem;
-            border-radius: var(--border-radius-lg);
+            background: var(--color-surface-elevated);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
             border-left: 4px solid var(--color-primary);
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             box-shadow: var(--shadow-sm);
+            cursor: pointer;
         }}
+
         .feature-item:hover {{
-            transform: translateY(-2px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow-md);
+            border-left-color: var(--color-secondary);
         }}
+
         .feature-item h4 {{
             color: var(--color-text-primary);
-            margin-bottom: 0.5rem;
-            font-family: var(--font-headline);
+            margin-bottom: var(--spacing-sm);
             font-weight: 600;
             font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
         }}
+
         .feature-item p {{
             color: var(--color-text-secondary);
             font-size: 0.875rem;
             line-height: 1.5;
         }}
-        .vercel-badge {{
-            background: linear-gradient(135deg, #000000, #333333);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 1.5rem;
-            font-size: 0.875rem;
-            display: inline-block;
-            margin: 0.75rem 0;
-            font-weight: 500;
-            box-shadow: var(--shadow-md);
-        }}
-        .competition-info {{
-            background: var(--color-card-background);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }}
-        .competition-info h3 {{
-            color: var(--color-text-primary);
-            margin-bottom: 1rem;
-            font-family: var(--font-headline);
-            font-weight: 600;
-        }}
+
         .solution-strengths {{
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
             border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            margin-top: 2rem;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            margin-top: var(--spacing-xl);
             box-shadow: var(--shadow-md);
         }}
+
         .solution-strengths h2 {{
-            color: var(--color-text-on-light);
-            margin-bottom: 1.5rem;
-            font-family: var(--font-headline);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-lg);
             font-weight: 700;
             font-size: 1.5rem;
+            text-align: center;
         }}
+
         .solution-strengths p {{
-            color: var(--color-text-on-light);
-            margin-bottom: 0.75rem;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
             font-weight: 500;
             line-height: 1.6;
         }}
+
         .solution-strengths strong {{
             color: var(--color-primary);
             font-weight: 600;
         }}
 
+        .user-guide {{
+            background: var(--color-surface-elevated);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }}
+
+        .user-guide h3 {{
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }}
+
+        .user-guide h3::before {{
+            content: '📚';
+            font-size: 1.25rem;
+        }}
+
+        .guide-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }}
+
+        .guide-item {{
+            background: var(--color-surface);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }}
+
+        .guide-item h4 {{
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }}
+
+        .guide-item.tech::before {{
+            content: '👨‍💻';
+        }}
+
+        .guide-item.business::before {{
+            content: '👔';
+        }}
+
+        .guide-item p {{
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }}
+
         @media (max-width: 768px) {{
-            .container {{ padding: 1rem; }}
-            .header {{ padding: 2rem; }}
-            .header h1 {{ font-size: 2rem; }}
+            .container {{ padding: var(--spacing-md); }}
+            .header {{ padding: var(--spacing-xl); }}
+            .header h1 {{ font-size: 2.5rem; }}
             .dashboard-grid {{ grid-template-columns: 1fr; }}
             .feature-list {{ grid-template-columns: 1fr; }}
+            .guide-grid {{ grid-template-columns: 1fr; }}
+            .nav-bar {{
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }}
         }}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🏆 Intelligent Retail Analytics Engine</h1>
-            <p>Transform your retail business with AI-powered insights, real-time analytics, and enterprise-grade performance</p>
-            <div class="vercel-badge">🚀 Production Deployed on Vercel</div>
-        </div>
+        <!-- Modern Navigation Bar -->
+        <nav class="nav-bar">
+            <div class="nav-brand">
+                Intelligent Retail Analytics
+            </div>
+            <div class="nav-actions">
+                <button class="nav-button" onclick="scrollToSection('dashboard')">Dashboard</button>
+                <button class="nav-button" onclick="scrollToSection('features')">Features</button>
+                <button class="nav-button" onclick="scrollToSection('testing')">Testing</button>
+            </div>
+        </nav>
 
-        <div class="competition-info">
-            <h3>🎯 Enterprise-Grade Solution</h3>
-            <p><span class="status-indicator status-online"></span><strong>System Status:</strong> Production Ready</p>
-            <p><strong>Quality Score:</strong> Excellent (95-98%)</p>
-            <p><strong>Technology:</strong> BigQuery AI + FastAPI + Vercel</p>
-            <p><strong>Architecture:</strong> Serverless, Scalable, Secure</p>
-            <p><strong>Performance:</strong> <2s Response Times</p>
-        </div>
+        <!-- Modern Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏆 Intelligent Retail Analytics Engine</h1>
+                <p class="header-subtitle">Transform your retail business with AI-powered insights, real-time analytics, and enterprise-grade performance in our modern 2025 dashboard</p>
 
-        <div class="dashboard-grid">
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <div class="status-dot"></div>
+                        <span class="status-text">System Online</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-dot"></div>
+                        <span class="status-text">AI Ready</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-dot"></div>
+                        <span class="status-text">Real-time Data</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- User Guide Section -->
+        <section class="user-guide">
+            <h3>Quick Start Guide</h3>
+            <p>Welcome to our modern analytics dashboard! Whether you're a technical expert or business user, we've designed this interface to be intuitive and powerful.</p>
+
+            <div class="guide-grid">
+                <div class="guide-item tech">
+                    <h4>For Technical Users</h4>
+                    <p>Explore our API endpoints, view detailed analytics, and test system performance. Use the interactive buttons below to run real-time queries and see live data processing.</p>
+                </div>
+                <div class="guide-item business">
+                    <h4>For Business Users</h4>
+                    <p>Focus on the key metrics and insights. Our dashboard presents complex data in simple, actionable visualizations that drive business decisions.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Metrics -->
+        <section id="dashboard" class="dashboard-grid">
             <div class="card">
-                <h3>📊 System Overview</h3>
+                <h3><span class="card-icon">📊</span> System Overview</h3>
                 <div class="metric">{total_products}</div>
-                <div class="metric-label">Total Products Analyzed</div>
+                <div class="metric-label">Products Analyzed</div>
             </div>
             <div class="card">
-                <h3>💰 Revenue Analytics</h3>
-                <div class="metric">${total_revenue:,.2f}</div>
+                <h3><span class="card-icon">💰</span> Revenue Analytics</h3>
+                <div class="metric">${total_revenue:,.0f}</div>
                 <div class="metric-label">Total Revenue</div>
             </div>
             <div class="card">
-                <h3>👥 User Engagement</h3>
+                <h3><span class="card-icon">👥</span> User Engagement</h3>
                 <div class="metric">{active_users}</div>
                 <div class="metric-label">Active Users</div>
             </div>
             <div class="card">
-                <h3>📈 Performance</h3>
+                <h3><span class="card-icon">📈</span> Performance</h3>
                 <div class="metric">{conversion_rate}%</div>
                 <div class="metric-label">Conversion Rate</div>
             </div>
-        </div>
+        </section>
 
-        <div class="test-section">
+        <!-- System Testing Interface -->
+        <section id="testing" class="test-section">
             <h2>🧪 System Testing Interface</h2>
-            <h3>Test Analytics Queries</h3>
-            <button class="btn" onclick="runDashboardTest()">📊 Get Dashboard Data</button>
-            <button class="btn" onclick="runProductTest()">📦 Get Product Performance</button>
-            <button class="btn" onclick="runCategoryTest()">📂 Get Category Analysis</button>
-            <button class="btn" onclick="runHealthTest()">❤️ System Health Check</button>
-            <div id="test-results"></div>
-        </div>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg);">
+                Test our analytics APIs and see real-time data processing in action
+            </p>
 
-        <div class="test-section">
+            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);">
+                <button class="btn" onclick="runDashboardTest()">📊 Dashboard Data</button>
+                <button class="btn" onclick="runProductTest()">📦 Product Performance</button>
+                <button class="btn" onclick="runCategoryTest()">📂 Category Analysis</button>
+                <button class="btn" onclick="runHealthTest()">❤️ System Health</button>
+            </div>
+
+            <div id="test-results"></div>
+        </section>
+
+        <!-- AI Features Demonstration -->
+        <section id="features" class="test-section">
             <h2>🎨 AI Features Demonstration</h2>
-            <p style="margin-bottom: 20px; color: #7f8c8d;">Click any feature below to see detailed demonstrations:</p>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg);">
+                Explore our cutting-edge AI capabilities - click any feature to see detailed demonstrations
+            </p>
+
             <div class="feature-list">
-                <div class="feature-item">
-                    <button class="btn" onclick="showFeatureDemo('multimodal')" style="width: 100%; margin-bottom: 10px;">🤖 Multimodal Embeddings</button>
-                    <p>Text + Image processing for comprehensive product understanding</p>
+                <div class="feature-item" onclick="showFeatureDemo('multimodal')">
+                    <h4>🤖 Multimodal Embeddings</h4>
+                    <p>Advanced text and image processing for comprehensive product understanding and categorization</p>
                 </div>
-                <div class="feature-item">
-                    <button class="btn" onclick="showFeatureDemo('vector')" style="width: 100%; margin-bottom: 10px;">🔍 Vector Search</button>
-                    <p>Semantic similarity matching for intelligent recommendations</p>
+                <div class="feature-item" onclick="showFeatureDemo('vector')">
+                    <h4>🔍 Vector Search</h4>
+                    <p>Semantic similarity matching for intelligent product recommendations and discovery</p>
                 </div>
-                <div class="feature-item">
-                    <button class="btn" onclick="showFeatureDemo('generative')" style="width: 100%; margin-bottom: 10px;">🧠 Generative AI</button>
-                    <p>Automated business insights and executive summaries</p>
+                <div class="feature-item" onclick="showFeatureDemo('generative')">
+                    <h4>🧠 Generative AI</h4>
+                    <p>Automated business insights and executive summaries powered by advanced AI models</p>
                 </div>
-                <div class="feature-item">
-                    <button class="btn" onclick="showFeatureDemo('analytics')" style="width: 100%; margin-bottom: 10px;">📊 Real-time Analytics</button>
-                    <p>Live dashboard with performance monitoring</p>
+                <div class="feature-item" onclick="showFeatureDemo('analytics')">
+                    <h4>📊 Real-time Analytics</h4>
+                    <p>Live dashboard with streaming data and performance monitoring capabilities</p>
                 </div>
-                <div class="feature-item">
-                    <button class="btn" onclick="showFeatureDemo('security')" style="width: 100%; margin-bottom: 10px;">🔒 Enterprise Security</button>
-                    <p>OWASP compliant with comprehensive protection</p>
+                <div class="feature-item" onclick="showFeatureDemo('security')">
+                    <h4>🔒 Enterprise Security</h4>
+                    <p>OWASP compliant security framework with comprehensive data protection</p>
                 </div>
-                <div class="feature-item">
-                    <button class="btn" onclick="showFeatureDemo('performance')" style="width: 100%; margin-bottom: 10px;">⚡ High Performance</button>
-                    <p>Sub-2 second query response times</p>
+                <div class="feature-item" onclick="showFeatureDemo('performance')">
+                    <h4>⚡ High Performance</h4>
+                    <p>Optimized BigQuery queries with sub-2 second response times and caching</p>
                 </div>
             </div>
-            <div id="feature-demo-results" style="margin-top: 20px;"></div>
-        </div>
 
-        <div class="test-section">
+            <div id="feature-demo-results" style="margin-top: var(--spacing-xl);"></div>
+        </section>
+
+        <!-- Recent AI Insights -->
+        <section class="test-section">
             <h2>📋 Recent AI Insights</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg);">
+                Latest automated insights generated by our AI system
+            </p>
             <ul class="insights-list">
                 {insights_html}
             </ul>
-        </div>
+        </section>
 
-        <div class="solution-strengths">
+        <!-- Solution Strengths -->
+        <section class="solution-strengths">
             <h2>🏆 Why Choose Our Solution</h2>
-            <p><strong>🚀 Technical Excellence:</strong> Complete BigQuery AI integration with production-ready architecture, enterprise security, and 99.9% uptime SLA</p>
-            <p><strong>💡 Innovation & AI:</strong> Multimodal embeddings, vector search, and generative AI for comprehensive retail intelligence</p>
-            <p><strong>⚡ Performance & Scale:</strong> Sub-2 second response times, handles 1M+ products, auto-scaling serverless infrastructure</p>
-            <p><strong>🔒 Enterprise Security:</strong> OWASP compliant, SOC 2 ready, GDPR compliant with comprehensive audit logging</p>
-            <p><strong>📊 Business Impact:</strong> 25% revenue increase potential, 40% efficiency gains, real-time decision support</p>
-            <p><strong>🎯 Professional Delivery:</strong> Complete documentation, GitHub repository, live demo, and production deployment</p>
-        </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+                <div>
+                    <p><strong style="color: var(--color-primary);">🚀 Technical Excellence:</strong> Complete BigQuery AI integration with production-ready architecture, enterprise security, and 99.9% uptime SLA</p>
+                    <p><strong style="color: var(--color-secondary);">💡 Innovation & AI:</strong> Multimodal embeddings, vector search, and generative AI for comprehensive retail intelligence</p>
+                    <p><strong style="color: var(--color-accent);">⚡ Performance & Scale:</strong> Sub-2 second response times, handles 1M+ products, auto-scaling serverless infrastructure</p>
+                </div>
+                <div>
+                    <p><strong style="color: var(--color-success);">🔒 Enterprise Security:</strong> OWASP compliant, SOC 2 ready, GDPR compliant with comprehensive audit logging</p>
+                    <p><strong style="color: var(--color-warning);">📊 Business Impact:</strong> 25% revenue increase potential, 40% efficiency gains, real-time decision support</p>
+                    <p><strong style="color: var(--color-error);">🎯 Professional Delivery:</strong> Complete documentation, GitHub repository, live demo, and production deployment</p>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script>
+        // Smooth scrolling function
+        function scrollToSection(sectionId) {{
+            const element = document.getElementById(sectionId);
+            if (element) {{
+                element.scrollIntoView({{
+                    behavior: 'smooth',
+                    block: 'start'
+                }});
+            }}
+        }}
+
         function showResult(title, data) {{
             const resultsDiv = document.getElementById('test-results');
             const resultBox = document.createElement('div');
